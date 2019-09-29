@@ -11,3 +11,47 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
 }
+
+.Board {
+    width: 400px;
+    display: block;
+    margin: 0 auto;
+    box-shadow: 1px 1px 3px grey;
+    overflow: auto;
+}
+
+.box {
+    width: 34px;
+    height: 34px;
+    display: block;
+    float: left;
+    padding: 8px;
+}
+
+.white {
+    background: white;
+}
+
+.black {
+    background: black;
+}
+
+.circle {
+    height: 34px;
+    width: 34px;
+    border-radius: 50%;
+    display: inline-block;
+    cursor: pointer;
+}
+
+.two {
+    background-color: beige;
+}
+.one {
+    background-color: crimson;
+}
+
+.movable {
+    background: #865151;
+    cursor: pointer;
+}
