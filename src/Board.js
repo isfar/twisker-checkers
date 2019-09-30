@@ -8,101 +8,49 @@ class Board extends Component {
         super(props);
 
         this.state = {
-            players: {
-                one: {
-                    pieceCount: 16,
-                },
-                two: {
-                    pieceCount: 16,
-                }
-            },
+            playerOnePieceCount: 12,
+            playerTwoPieceCount: 12,
+            turn: "one",
             selectedPiece: null,
             movablePositions: [],
-            board: [
-                [
-                    { piece: null, bg: "black" },
-                    { piece: null, bg: "white" },
-                    { piece: null, bg: "black" },
-                    { piece: null, bg: "white" },
-                    { piece: null, bg: "black" },
-                    { piece: null, bg: "white" },
-                    { piece: null, bg: "black" },
-                    { piece: null, bg: "white" },
-                ],
-                [
-                    { piece: null, bg: "white" },
-                    { piece: null, bg: "black" },
-                    { piece: null, bg: "white" },
-                    { piece: null, bg: "black" },
-                    { piece: null, bg: "white" },
-                    { piece: null, bg: "black" },
-                    { piece: null, bg: "white" },
-                    { piece: null, bg: "black" },
-                ],
-                [
-                    { piece: null, bg: "black" },
-                    { piece: null, bg: "white" },
-                    { piece: null, bg: "black" },
-                    { piece: null, bg: "white" },
-                    { piece: null, bg: "black" },
-                    { piece: null, bg: "white" },
-                    { piece: null, bg: "black" },
-                    { piece: null, bg: "white" },
-                ],
-                [
-                    { piece: null, bg: "white" },
-                    { piece: null, bg: "black" },
-                    { piece: null, bg: "white" },
-                    { piece: null, bg: "black" },
-                    { piece: null, bg: "white" },
-                    { piece: null, bg: "black" },
-                    { piece: null, bg: "white" },
-                    { piece: null, bg: "black" },
-                ],
-                [
-                    { piece: null, bg: "black" },
-                    { piece: null, bg: "white" },
-                    { piece: null, bg: "black" },
-                    { piece: null, bg: "white" },
-                    { piece: null, bg: "black" },
-                    { piece: null, bg: "white" },
-                    { piece: null, bg: "black" },
-                    { piece: null, bg: "white" },
-                ],
-                [
-                    { piece: null, bg: "white" },
-                    { piece: null, bg: "black" },
-                    { piece: null, bg: "white" },
-                    { piece: null, bg: "black" },
-                    { piece: null, bg: "white" },
-                    { piece: null, bg: "black" },
-                    { piece: null, bg: "white" },
-                    { piece: null, bg: "black" },
-                ],
-                [
-                    { piece: null, bg: "black" },
-                    { piece: null, bg: "white" },
-                    { piece: null, bg: "black" },
-                    { piece: null, bg: "white" },
-                    { piece: null, bg: "black" },
-                    { piece: null, bg: "white" },
-                    { piece: null, bg: "black" },
-                    { piece: null, bg: "white" },
-                ],
-                [
-                    { piece: null, bg: "white" },
-                    { piece: null, bg: "black" },
-                    { piece: null, bg: "white" },
-                    { piece: null, bg: "black" },
-                    { piece: null, bg: "white" },
-                    { piece: null, bg: "black" },
-                    { piece: null, bg: "white" },
-                    { piece: null, bg: "black" },
-                ],
-            ],
+            board: [],
         };
 
+        this.state.board = this.populateBoard();
         this.state.board = this.initBoard();
+    }
+
+    toggleTurn = () => this.setState({
+        turn: this.state.turn === "one" ? "two" : "one"
+    });
+
+    populateBoard = () => {
+        const board = [];
+        const dimension = {
+            numRows: 8,
+            numCols: 8
+        };
+
+        let bg = "black";
+
+        for (let rowIndex = 0; rowIndex < dimension.numRows; rowIndex++) {
+            const row = [];
+
+            for (let colIndex = 0; colIndex < dimension.numCols; colIndex++) {
+                if (colIndex !== 0) {
+                    bg = bg === "black" ? "white" : "black";
+                }
+                
+                row[colIndex] = {
+                    piece: null,
+                    bg
+                };
+            }
+
+            board.push(row);
+        }
+
+        return board;
     }
 
     selectPiece = selectedPiece => {
@@ -149,13 +97,33 @@ class Board extends Component {
     }
 
     move = (targetPosition) => {
-        const board = this.state.board;
+        const board = [ ...this.state.board ];
         const targetBox = board[targetPosition.rowIndex][targetPosition.colIndex];
 
         if (targetBox.movable) { 
-            let selectedPiece = this.state.selectedPiece;
+            let selectedPiece = { ...this.state.selectedPiece};
             const currentBox = board[selectedPiece.position.rowIndex][selectedPiece.position.colIndex];
             const piece = { ...currentBox.piece};
+
+            const interimPiece = this.getPieceBetween(selectedPiece.position, targetPosition);
+
+            let obj;
+
+            if (interimPiece) {
+                if (interimPiece.player === "one") {
+                    obj = {
+                        playerOnePieceCount: this.state.playerOnePieceCount - 1
+                    };
+                } else {
+                    obj = {
+                        playerTwoPieceCount: this.state.playerTwoPieceCount - 1
+                    };
+                }
+                
+                board[interimPiece.position.rowIndex][interimPiece.position.colIndex].piece = null;
+
+                this.setState(obj);
+            }
 
             currentBox.piece.player = null;
             piece.position = targetPosition;
@@ -170,15 +138,28 @@ class Board extends Component {
             })
 
             currentBox.piece = null;
-
             this.clearMovables();
         } else {
             console.log("Not movable");
         }
     }
 
+    getPieceBetween = (position, targetPosition) => {
+        const rowIndex = (position.rowIndex + targetPosition.rowIndex) / 2;
+
+        if (Number.isInteger(rowIndex)) {
+            const colIndex = (position.colIndex + targetPosition.colIndex) / 2;
+            return this.getPieceByPosition({
+                rowIndex,
+                colIndex
+            });
+        }
+
+        return null;
+    }
+
     initBoard = () => {
-        const playerMap = {
+        const playerRowMap = {
             one: [ 0, 1, 2 ],
             two: [ 5, 6, 7 ]
         };
@@ -187,11 +168,11 @@ class Board extends Component {
             const row = boardRow.map((box, colIndex) => {
                 let player = null;
                 if (box.bg === "black") {
-                    if (playerMap.one.includes(rowIndex)) {
+                    if (playerRowMap.one.includes(rowIndex)) {
                         player = 'one';
                     }
 
-                    if (playerMap.two.includes(rowIndex)) {
+                    if (playerRowMap.two.includes(rowIndex)) {
                         player = 'two';
                     }
                 }
@@ -232,12 +213,12 @@ class Board extends Component {
                                 return (
                                     <Box
                                         position={{ rowIndex: i, colIndex: j }}
-                                        getPieceByPosition={this.getPieceByPosition}
                                         key={"" + i + j}
                                         box={box}
                                         setMovables={this.setMovables}
                                         selectPiece={this.selectPiece}
                                         move={this.move}
+                                        getPieceByPosition={this.getPieceByPosition}
                                     ></Box>
                                 );
                             })}
@@ -246,6 +227,8 @@ class Board extends Component {
                     );
                 })}
 
+                <div>{this.state.playerOnePieceCount}</div>
+                <div>{this.state.playerTwoPieceCount}</div>
             </div>
         );
     }

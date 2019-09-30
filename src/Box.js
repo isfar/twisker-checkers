@@ -55,7 +55,7 @@ class Box extends Component {
     getPieceByPosition = position => this.props.getPieceByPosition(position);
 
     setMovables = (box, event) => {
-        const movablePositions = [];
+        let movablePositions = [];
         const player = box.piece.player;
         const colIndex = box.piece.position.colIndex;
         const rowIndex = box.piece.position.rowIndex;
@@ -63,17 +63,13 @@ class Box extends Component {
 
         let nextPlayer;
 
-        let topRight = this.getNextPositionBy(player, rowIndex, colIndex, true, true);
-
-        movablePositions.push(topRight);
-
+        movablePositions.push(
+            this.getNextPositionBy(player, rowIndex, colIndex, true, true)
+        );
 
         movablePositions.push(
             this.getNextPositionBy(player, rowIndex, colIndex, true, false)
         );
-
-
-        /*
 
         if (box.piece.crowned) {
             movablePositions.push(
@@ -84,15 +80,18 @@ class Box extends Component {
                 this.getNextPositionBy(player, rowIndex, colIndex, false, false)
             );
         }
-
-        */
         
         this.props.selectPiece(box.piece);
-        this.props.setMovables(movablePositions.filter(position => position !== null));
+        movablePositions = movablePositions.filter(position => position !== null);
+
+        if (movablePositions.length !== 0) {
+            this.props.setMovables(movablePositions);
+        } else {
+            console.log("The piece is not movable");
+        }
 
         event.stopPropagation();
     }
-
 
     render() {
         const box = this.props.box;
@@ -101,7 +100,6 @@ class Box extends Component {
             one: box.piece && box.piece.player === 'one',
             two: box.piece && box.piece.player === 'two',
         });
-
 
         return (
             <div
