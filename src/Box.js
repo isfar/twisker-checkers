@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import classNames from "classnames";
+import crown from "./crown.png";
 
 const mirror = index => 7 - index;
 
@@ -106,7 +107,7 @@ class Box extends Component {
         const spanClassName = classNames({
             circle: true,
             one: box.piece && box.piece.player === 'one',
-            two: box.piece && box.piece.player === 'two',
+            two: box.piece && box.piece.player === 'two'
         });
 
         return (
@@ -117,10 +118,10 @@ class Box extends Component {
                 })}
             >
                 { box.piece ?
-                    (<span
+                    (<div
                         className={spanClassName}
                         onClick={(event) => this.setMovables(box, event)}
-                    ></span>) : 
+                    >{ box.piece.crowned ? <img className="crown" src={ crown }></img> : ""}</div>) : 
                     ""
                 }
             </div>
