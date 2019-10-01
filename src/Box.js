@@ -8,7 +8,7 @@ class Box extends Component {
         super(props);
     }
 
-    getNextPositionBy(player, rowIndex, colIndex, top = true, right = true) {
+    getNextPositionBy(player, rowIndex, colIndex, top = true, right = true, recursive = true) {
 
         const colBoundForPlayerOne = right ? 0 : 7;
         const colBoundForPlayerTwo = right ? 7 : 0;
@@ -40,10 +40,12 @@ class Box extends Component {
                 if (player === nextPiece.player) {
                     return null;
                 } else {
-                    position = this.getNextPositionBy(player, position.rowIndex, position.colIndex, top, right);
+                    if (recursive) {
+                        position = this.getNextPositionBy(player, position.rowIndex, position.colIndex, top, right, false);
 
-                    if (position && this.getPieceByPosition(position)) {
-                        return null;
+                        if (position && this.getPieceByPosition(position)) {
+                            return null;
+                        }
                     }
                 }
             }
@@ -55,8 +57,16 @@ class Box extends Component {
     getPieceByPosition = position => this.props.getPieceByPosition(position);
 
     setMovables = (box, event) => {
-        let movablePositions = [];
+        event.stopPropagation();
+
         const player = box.piece.player;
+
+        if (!this.props.hasTurn(player)) {
+            console.log("This is not your turn!");
+            return;
+        }
+
+        let movablePositions = [];
         const colIndex = box.piece.position.colIndex;
         const rowIndex = box.piece.position.rowIndex;
         //const rowIndex = player === "one" ? box.piece.position.rowIndex : mirror(box.piece.position.rowIndex);
@@ -89,8 +99,6 @@ class Box extends Component {
         } else {
             console.log("The piece is not movable");
         }
-
-        event.stopPropagation();
     }
 
     render() {

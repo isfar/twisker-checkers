@@ -2,22 +2,36 @@ import React, { Component } from "react"
 import Box from "./Box"
 import "./Board.css"
 
+const initialState = {
+    playerOnePieceCount: 12,
+    playerTwoPieceCount: 12,
+    turn: "one",
+    selectedPiece: null,
+    movablePositions: [],
+    board: [],
+    winner: null
+};
+
 class Board extends Component {
 
     constructor(props) {
         super(props);
 
         this.state = {
-            playerOnePieceCount: 12,
-            playerTwoPieceCount: 12,
-            turn: "one",
-            selectedPiece: null,
-            movablePositions: [],
-            board: [],
+            ...initialState
         };
 
-        this.state.board = this.populateBoard();
-        this.state.board = this.initBoard();
+        const board = this.populateBoard();
+        this.state.board = this.initBoard(board);
+    }
+
+    resetBoard = () => {
+        let board = this.populateBoard();
+        board = this.initBoard(board);
+        this.setState({
+            ...initialState,
+            board,
+        });
     }
 
     toggleTurn = () => this.setState({
@@ -76,6 +90,8 @@ class Board extends Component {
         });
     }
 
+    hasTurn = player => player === this.state.turn;
+
     getPieceByPosition = position => {
         return this.state.board[position.rowIndex][position.colIndex].piece;
     }
@@ -96,7 +112,7 @@ class Board extends Component {
         });
     }
 
-    move = (targetPosition) => {
+    move = targetPosition => {
         const board = [ ...this.state.board ];
         const targetBox = board[targetPosition.rowIndex][targetPosition.colIndex];
 
@@ -111,13 +127,27 @@ class Board extends Component {
 
             if (interimPiece) {
                 if (interimPiece.player === "one") {
+                    let count = this.state.playerOnePieceCount - 1;
                     obj = {
-                        playerOnePieceCount: this.state.playerOnePieceCount - 1
+                        playerOnePieceCount: count
                     };
+
+                    if (count === 0) {
+                        this.setState({
+                            winner: "two"
+                        });
+                    }
                 } else {
+                    let count = this.state.playerTwoPieceCount - 1;
                     obj = {
-                        playerTwoPieceCount: this.state.playerTwoPieceCount - 1
+                        playerTwoPieceCount: count
                     };
+
+                    if (count === 0) {
+                        this.setState({
+                            winner: "one"
+                        });
+                    }
                 }
                 
                 board[interimPiece.position.rowIndex][interimPiece.position.colIndex].piece = null;
@@ -130,6 +160,9 @@ class Board extends Component {
             targetBox.piece = piece;
             targetBox.movable = false;
 
+            const bound = piece.player === "one" ? 7 : 0;
+            piece.crowned = piece.position.rowIndex === bound ? true : piece.crowned;
+
             selectedPiece = piece;
 
             this.setState({
@@ -138,6 +171,8 @@ class Board extends Component {
             })
 
             currentBox.piece = null;
+
+            this.toggleTurn();
             this.clearMovables();
         } else {
             console.log("Not movable");
@@ -158,13 +193,13 @@ class Board extends Component {
         return null;
     }
 
-    initBoard = () => {
+    initBoard = board => {
         const playerRowMap = {
             one: [ 0, 1, 2 ],
             two: [ 5, 6, 7 ]
         };
 
-        const board = this.state.board.map((boardRow, rowIndex) => {
+        board = board.map((boardRow, rowIndex) => {
             const row = boardRow.map((box, colIndex) => {
                 let player = null;
                 if (box.bg === "black") {
@@ -180,7 +215,6 @@ class Board extends Component {
                 const piece = player ? {
                     player,
                     crowned: false,
-                    selected: false,
                     position: {
                         rowIndex,
                         colIndex
@@ -205,30 +239,61 @@ class Board extends Component {
     render() {
 
         return (
-            <div className="Board">
-                {this.state.board.map((row, i) => {
-                    return (
-                        <div className="row" key={i}>
-                            {row.map((box, j) => {
-                                return (
-                                    <Box
-                                        position={{ rowIndex: i, colIndex: j }}
-                                        key={"" + i + j}
-                                        box={box}
-                                        setMovables={this.setMovables}
-                                        selectPiece={this.selectPiece}
-                                        move={this.move}
-                                        getPieceByPosition={this.getPieceByPosition}
-                                    ></Box>
-                                );
-                            })}
+            <div id="Board">
+                <h1>Twisker Checkers Game!</h1>
+                <div className="board-wrapper">
+                    <div className="checkers-board">
+                        {this.state.board.map((row, i) => {
+                            return (
+                                <div className="row" key={i}>
+                                    {row.map((box, j) => {
+                                        return (
+                                            <Box
+                                                position={{ rowIndex: i, colIndex: j }}
+                                                key={"" + i + j}
+                                                box={box}
+                                                setMovables={this.setMovables}
+                                                selectPiece={this.selectPiece}
+                                                hasTurn={this.hasTurn}
+                                                move={this.move}
+                                                getPieceByPosition={this.getPieceByPosition}
+                                            ></Box>
+                                        );
+                                    })}
 
-                        </div>
-                    );
-                })}
+                                </div>
+                            );
+                        })}
 
-                <div>{this.state.playerOnePieceCount}</div>
-                <div>{this.state.playerTwoPieceCount}</div>
+                    </div>
+                </div>
+
+                <div className="info">
+                    <div className="currentPlayer">
+                        <strong>Current Player:</strong>
+                        <span className={ "circle " + this.state.turn}></span>
+                    </div>
+                    <div className="pieceCount">
+                        <span className="circle one"></span> has&nbsp;
+                        <strong>{this.state.playerOnePieceCount}</strong> pieces left
+                    </div>
+                    <div className="pieceCount">
+                        <span className="circle two"></span> has&nbsp;
+                        <strong>{this.state.playerTwoPieceCount}</strong> pieces left
+                    </div>
+                    <div className="winner">
+                        Winner: { this.state.winner ? 
+                            (<span className={"circle " + this.state.winner}></span>)
+                            : "N/A" }
+                    </div>
+                    <div>
+                        <button
+                            id="resetBoard"
+                            onClick={this.resetBoard}
+                        >Reset Board</button>
+                    </div>
+                </div>
+
             </div>
         );
     }

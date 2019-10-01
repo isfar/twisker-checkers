@@ -5,6 +5,7 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background: #edf2f7;
 }
 
 code {
@@ -12,12 +13,20 @@ code {
     monospace;
 }
 
-.Board {
+#Board {
+    width: 600px;
+    height: 600px;
+    margin: 0 auto;
+    display: block;
+    overflow: auto;
+}
+
+#Board .checkers-board {
     width: 400px;
     display: block;
-    margin: 0 auto;
     box-shadow: 1px 1px 3px grey;
     overflow: auto;
+    float: left;
 }
 
 .box {
@@ -44,8 +53,26 @@ code {
     cursor: pointer;
 }
 
+.info .circle {
+    position: relative;
+    top: 10px;
+    left: 10px;
+}
+
+.info .currentPlayer {
+    margin-bottom: 20px;
+}
+
+.info .pieceCount .circle {
+    left: 0;
+}
+
+.info .winner {
+    margin-top: 30px;
+}
+
 .two {
-    background-color: beige;
+    background-color: #d4a8a8;
 }
 .one {
     background-color: crimson;
@@ -54,4 +81,18 @@ code {
 .movable {
     background: #865151;
     cursor: pointer;
+}
+
+#resetBoard {
+    margin: 20px 10px;
+    background: #865151;
+    padding: 10px;
+    border: none;
+    cursor: pointer;
+    color: white;
+    box-shadow: 1px 1px 3px grey;
+}
+
+#resetBoard:hover {
+    background: #222;
 }
