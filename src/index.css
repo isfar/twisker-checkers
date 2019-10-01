@@ -5,9 +5,94 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background: #edf2f7;
 }
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
+}
+
+#Board {
+    width: 600px;
+    height: 600px;
+    margin: 0 auto;
+    display: block;
+    overflow: auto;
+}
+
+#Board .checkers-board {
+    width: 400px;
+    display: block;
+    box-shadow: 1px 1px 3px grey;
+    overflow: auto;
+    float: left;
+}
+
+.box {
+    width: 34px;
+    height: 34px;
+    display: block;
+    float: left;
+    padding: 8px;
+}
+
+.white {
+    background: white;
+}
+
+.black {
+    background: black;
+}
+
+.circle {
+    height: 34px;
+    width: 34px;
+    border-radius: 50%;
+    display: inline-block;
+    cursor: pointer;
+}
+
+.info .circle {
+    position: relative;
+    top: 10px;
+    left: 10px;
+}
+
+.info .currentPlayer {
+    margin-bottom: 20px;
+}
+
+.info .pieceCount .circle {
+    left: 0;
+}
+
+.info .winner {
+    margin-top: 30px;
+}
+
+.two {
+    background-color: #d4a8a8;
+}
+.one {
+    background-color: crimson;
+}
+
+.movable {
+    background: #865151;
+    cursor: pointer;
+}
+
+#resetBoard {
+    margin: 20px 10px;
+    background: #865151;
+    padding: 10px;
+    border: none;
+    cursor: pointer;
+    color: white;
+    box-shadow: 1px 1px 3px grey;
+}
+
+#resetBoard:hover {
+    background: #222;
 }
