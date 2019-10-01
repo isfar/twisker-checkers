@@ -1,16 +1,10 @@
 import React, { Component } from "react";
-import classNames from "classnames";
-import crown from "./crown.png";
-
-const mirror = index => 7 - index;
+import Piece from "./Piece";
 
 class Box extends Component {
-    constructor(props) {
-        super(props);
-    }
 
     getNextPositionBy(player, rowIndex, colIndex, top = true, right = true, recursive = true) {
-
+        const mirror = index => 7 - index;
         const colBoundForPlayerOne = right ? 0 : 7;
         const colBoundForPlayerTwo = right ? 7 : 0;
         const rowBound = top ? 7 : 0;
@@ -57,43 +51,32 @@ class Box extends Component {
 
     getPieceByPosition = position => this.props.getPieceByPosition(position);
 
-    setMovables = (box, event) => {
-        event.stopPropagation();
+    getMovablePositionsForPiece = piece => {
+        const movablePositions = [];
+        const colIndex = piece.position.colIndex;
+        const rowIndex = piece.position.rowIndex;
 
-        const player = box.piece.player;
+        movablePositions.push(this.getNextPositionBy(piece.player, rowIndex, colIndex, true, true));
+        movablePositions.push(this.getNextPositionBy(piece.player, rowIndex, colIndex, true, false));
 
-        if (!this.props.hasTurn(player)) {
+        if (piece.crowned) {
+            movablePositions.push(this.getNextPositionBy(piece.player, rowIndex, colIndex, false, true));
+            movablePositions.push(this.getNextPositionBy(piece.player, rowIndex, colIndex, false, false));
+        }
+
+        return  movablePositions.filter(position => position !== null);
+    }
+
+    setMovables = (piece, e) => {
+        e.stopPropagation();
+
+        if (!this.props.hasTurn(piece.player)) {
             console.log("This is not your turn!");
             return;
         }
 
-        let movablePositions = [];
-        const colIndex = box.piece.position.colIndex;
-        const rowIndex = box.piece.position.rowIndex;
-        //const rowIndex = player === "one" ? box.piece.position.rowIndex : mirror(box.piece.position.rowIndex);
-
-        let nextPlayer;
-
-        movablePositions.push(
-            this.getNextPositionBy(player, rowIndex, colIndex, true, true)
-        );
-
-        movablePositions.push(
-            this.getNextPositionBy(player, rowIndex, colIndex, true, false)
-        );
-
-        if (box.piece.crowned) {
-            movablePositions.push(
-                this.getNextPositionBy(player, rowIndex, colIndex, false, true)
-            );
-
-            movablePositions.push(
-                this.getNextPositionBy(player, rowIndex, colIndex, false, false)
-            );
-        }
-        
-        this.props.selectPiece(box.piece);
-        movablePositions = movablePositions.filter(position => position !== null);
+        this.props.selectPiece(piece);
+        const movablePositions = this.getMovablePositionsForPiece(piece);
 
         if (movablePositions.length !== 0) {
             this.props.setMovables(movablePositions);
@@ -103,25 +86,20 @@ class Box extends Component {
     }
 
     render() {
-        const box = this.props.box;
-        const spanClassName = classNames({
-            circle: true,
-            one: box.piece && box.piece.player === 'one',
-            two: box.piece && box.piece.player === 'two'
-        });
+        const props = this.props;
 
         return (
             <div
-                className={"box " + box.bg + (box.movable ? " movable" : "")}
+                className={"box " + props.bg + (props.movable ? " movable" : "")}
                 onClick={() => this.props.move({
                     ...this.props.position
                 })}
             >
-                { box.piece ?
-                    (<div
-                        className={spanClassName}
-                        onClick={(event) => this.setMovables(box, event)}
-                    >{ box.piece.crowned ? <img className="crown" src={ crown }></img> : ""}</div>) : 
+                {props.piece ?
+                    <Piece
+                        setMovables={this.setMovables}
+                        piece={props.piece}
+                    /> : 
                     ""
                 }
             </div>
