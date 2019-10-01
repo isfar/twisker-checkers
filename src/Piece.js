@@ -7,7 +7,7 @@ function Piece(props) {
             className={"circle " + props.piece.player}
             onClick={e => props.setMovables(props.piece, e)}
         >
-            {props.piece.crowned ? <img className="crown" src={crown}></img> : ""}
+            {props.piece.crowned ? <img className="crown" src={crown} alt="crown"></img> : ""}
         </div>
     );
 }
