@@ -7,7 +7,7 @@ const initialState = {
         one: 12,
         two: 12
     },
-    killed: 0,
+    killed: false,
     turn: "one",
     selectedPiece: null,
     movablePositions: [],
@@ -36,8 +36,8 @@ class Board extends Component {
 
     toggleTurn = () => this.setState({
         turn: this.state.turn === "one" ? "two" : "one",
-        killed: 0
-    });
+        killed: false,
+    }, () => this.clearMovables());
 
     populateBoard = () => {
         const board = [];
@@ -110,7 +110,7 @@ class Board extends Component {
                 tempState = {
                     count,
                     winner: count.one === 0 ? "two" : null,
-                    killed: this.state.killed + 1
+                    killed: !this.state.killed
                 };
 
             } else {
@@ -118,7 +118,7 @@ class Board extends Component {
                 tempState = {
                     count,
                     winner: count.two === 0 ? "two" : null,
-                    killed: this.state.killed + 1
+                    killed: !this.state.killed
                 };
             }
 
@@ -144,12 +144,16 @@ class Board extends Component {
             this.clearMovables();
 
             if (this.state.killed) {
-                const movablePositions = this.getMovablePositionsForPiece(selectedPiece);
-                if (movablePositions.length) {
-                    this.setMovables(selectedPiece);
-                } else {
-                    this.toggleTurn();
-                }
+                this.setState({
+                    killed: !this.state.killed
+                }, () => {
+                    const movablePositions = this.getMovablePositionsForPiece(selectedPiece);
+                    if (movablePositions.length) {
+                        this.setMovables(selectedPiece);
+                    } else {
+                        this.toggleTurn();
+                    }
+                });
             } else {
                 this.toggleTurn();
             }
@@ -212,22 +216,16 @@ class Board extends Component {
         const movablePositions = this.getMovablePositionsForPiece(piece);
 
         if (movablePositions.length !== 0) {
-            this.setMovablePositions(movablePositions);
+            this.clearMovables();
+            const board = [ ...this.state.board ];
+            movablePositions.map(position => board[position.rowIndex][position.colIndex].movable = true);
+            this.setState({
+                movablePositions,
+                board
+            });
         } else {
             console.log("The piece is not movable");
         }
-    }
-
-    setMovablePositions = movablePositions => {
-        this.clearMovables();
-        const board = [...this.state.board];
-
-        movablePositions.map(position => board[position.rowIndex][position.colIndex].movable = true);
-
-        this.setState({
-            movablePositions,
-            board
-        });
     }
 
     getMovablePositionsForPiece = piece => {
@@ -318,11 +316,7 @@ class Board extends Component {
                                                 position={{ rowIndex: i, colIndex: j }}
                                                 key={"" + i + j}
                                                 setMovables={this.setMovables}
-                                                selectPiece={this.selectPiece}
-                                                hasTurn={this.hasTurn}
                                                 move={this.move}
-                                                getPieceByPosition={this.getPieceByPosition}
-                                                getMovablePositionsForPiece={this.getMovablePositionsForPiece}
                                                 { ...box }
                                             />
                                         );
