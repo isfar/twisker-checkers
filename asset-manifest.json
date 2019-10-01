@@ -1,0 +1,16 @@
+{
+  "files": {
+    "main.css": "/twisker-checkers/static/css/main.76b019a9.chunk.css",
+    "main.js": "/twisker-checkers/static/js/main.4a6bacf4.chunk.js",
+    "main.js.map": "/twisker-checkers/static/js/main.4a6bacf4.chunk.js.map",
+    "runtime-main.js": "/twisker-checkers/static/js/runtime-main.cdd873fc.js",
+    "runtime-main.js.map": "/twisker-checkers/static/js/runtime-main.cdd873fc.js.map",
+    "static/js/2.5aba6afd.chunk.js": "/twisker-checkers/static/js/2.5aba6afd.chunk.js",
+    "static/js/2.5aba6afd.chunk.js.map": "/twisker-checkers/static/js/2.5aba6afd.chunk.js.map",
+    "index.html": "/twisker-checkers/index.html",
+    "precache-manifest.e4f808f5278e1a5444ec2999039de657.js": "/twisker-checkers/precache-manifest.e4f808f5278e1a5444ec2999039de657.js",
+    "service-worker.js": "/twisker-checkers/service-worker.js",
+    "static/css/main.76b019a9.chunk.css.map": "/twisker-checkers/static/css/main.76b019a9.chunk.css.map",
+    "static/media/crown.png": "/twisker-checkers/static/media/crown.87581c70.png"
+  }
+}
