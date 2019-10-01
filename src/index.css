@@ -14,7 +14,7 @@ code {
 }
 
 #Board {
-    width: 600px;
+    width: 650px;
     height: 600px;
     margin: 0 auto;
     display: block;
@@ -68,7 +68,7 @@ code {
 }
 
 .info .winner {
-    margin-top: 30px;
+    margin: 15px auto 15px auto;
 }
 
 .crown {
@@ -92,8 +92,8 @@ code {
     cursor: pointer;
 }
 
-#resetBoard {
-    margin: 20px 10px;
+.info button {
+    margin: 5px;
     background: #865151;
     padding: 10px;
     border: none;
