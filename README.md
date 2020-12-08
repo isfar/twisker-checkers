@@ -1,5 +1,9 @@
 # Twisker Checkers Game
 
+## Play
+
+To play the game visit https://isfar.github.io/twisker-checkers/ 
+
 ## Installation
 
 Follow the steps as follows:
