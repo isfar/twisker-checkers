@@ -1,13 +1,13 @@
 import React from 'react';
 import crown from "./crown.png";
 
-function Piece(props) {
+const Piece = ({ piece, setMovables }) => {
     return (
         <div
-            className={"circle " + props.piece.player}
-            onClick={e => props.setMovables(props.piece, e)}
+            className={"circle " + piece.player}
+            onClick={e => setMovables(piece, e)}
         >
-            {props.piece.crowned ? <img className="crown" src={crown} alt="crown"></img> : ""}
+            {piece.crowned ? <img className="crown" src={crown} alt="crown"></img> : ""}
         </div>
     );
 }
