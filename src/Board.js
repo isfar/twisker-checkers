@@ -69,7 +69,7 @@ class Board extends Component {
     }
 
     selectPiece = selectedPiece => this.setState({
-            selectedPiece
+        selectedPiece
     });
 
     hasPiece = position => this.state.board[position.rowIndex][position.colIndex].piece !== null;
@@ -117,7 +117,7 @@ class Board extends Component {
                 count.two--;
                 tempState = {
                     count,
-                    winner: count.two === 0 ? "two" : null,
+                    winner: count.two === 0 ? "one" : null,
                     killed: !this.state.killed
                 };
             }

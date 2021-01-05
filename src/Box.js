@@ -1,24 +1,24 @@
 import React from "react";
 import Piece from "./Piece";
 
-const Box = props => {
+const Box = ({ setMovables, bg, movable, move, position, piece }) => {
 
-    const setMovables = (piece, e) => {
+    const thisSetMovables = (piece, e) => {
         e.stopPropagation();
-        props.setMovables(piece);
+        setMovables(piece);
     };
 
     return (
         <div
-            className={"box " + props.bg + (props.movable ? " movable" : "")}
-            onClick={() => props.move({
-                ...props.position
+            className={"box " + bg + (movable ? " movable" : "")}
+            onClick={() => move({
+                ...position
             })}
         >
-            {props.piece ?
+            {piece ?
                 <Piece
-                    setMovables={setMovables}
-                    piece={props.piece}
+                    setMovables={thisSetMovables}
+                    piece={piece}
                 /> :
                 ""
             }
